@@ -8,7 +8,9 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "jest",
-    "create-admin": "node src/scripts/createAdmin.js"
+    "create-admin": "node src/scripts/createAdmin.js",
+    "seed:demo": "ts-node src/scripts/seedDemoUsers.ts",
+    "seed:tests": "ts-node src/scripts/seedTests.ts"
   },
   "keywords": [
     "healthcare",

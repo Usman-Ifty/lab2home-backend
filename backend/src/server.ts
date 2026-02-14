@@ -35,6 +35,7 @@ const io = new Server(httpServer, {
             if (
                 allowedOrigins.indexOf(origin) !== -1 ||
                 origin.endsWith('.vercel.app') ||
+                origin.endsWith('.onrender.com') ||
                 process.env.NODE_ENV === 'development'
             ) {
                 callback(null, true);
@@ -71,11 +72,12 @@ app.use(cors({
         if (
             allowedOrigins.indexOf(origin) !== -1 ||
             origin.endsWith('.vercel.app') ||
+            origin.endsWith('.onrender.com') ||
             process.env.NODE_ENV === 'development'
         ) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(null, false); // Allow Vercel to handle its own errors instead of crashing backend
         }
     },
     credentials: true,
