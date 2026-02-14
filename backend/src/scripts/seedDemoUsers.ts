@@ -12,7 +12,7 @@ const demoUsers = {
     patient: {
         fullName: 'Demo Patient',
         email: 'patient@lab2home.com',
-        password: 'patient123',
+        password: 'patient12345',
         phone: '03001234567',
         dateOfBirth: new Date('1990-01-01'),
         address: '123 Street, City, Country',
@@ -22,7 +22,7 @@ const demoUsers = {
     lab: {
         fullName: 'Lab Contact person',
         email: 'lab@lab2home.com',
-        password: 'lab123',
+        password: 'lab12345',
         phone: '03007654321',
         labName: 'Demo Diagnostic Lab',
         labAddress: '456 Lab Plaza, Healthcare Ave',
@@ -38,7 +38,7 @@ const demoUsers = {
     phlebotomist: {
         fullName: 'John Phleb',
         email: 'phlebotomist@lab2home.com',
-        password: 'phleb123',
+        password: 'phleb12345',
         phone: '03009998887',
         qualification: 'Certified Phlebotomist',
         trafficLicense: {
@@ -52,7 +52,7 @@ const demoUsers = {
     },
     admin: {
         email: 'admin@lab2home.com',
-        password: 'admin123',
+        password: 'admin12345',
         isActive: true
     }
 };
