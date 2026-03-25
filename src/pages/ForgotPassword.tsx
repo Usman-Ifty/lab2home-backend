@@ -19,7 +19,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Squares from "@/components/home/Squares";
 import Footer from "@/components/shared/Footer";
-import CardNav from "@/components/home/CardNav";
+import Navbar from "@/components/shared/Navbar";
 import { KeyRound, Mail, Lock, Eye, EyeOff, ArrowLeft, CheckCircle2 } from "lucide-react";
 import logo from "/logo.svg";
 
@@ -63,11 +63,11 @@ type OTPFormValues = z.infer<typeof otpSchema>;
 type ResetFormValues = z.infer<typeof resetSchema>;
 
 export default function ForgotPassword() {
+    const [role, setRole] = useState<"patient" | "lab" | "phlebotomist" | "admin">("patient");
     const [currentStep, setCurrentStep] = useState<ForgotPasswordStep>("email");
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [isNavExpanded, setIsNavExpanded] = useState(false);
     const [resendCountdown, setResendCountdown] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -97,7 +97,7 @@ export default function ForgotPassword() {
     const onEmailSubmit = async (data: EmailFormValues) => {
         setIsLoading(true);
         try {
-            const response = await authAPI.forgotPassword(data.email);
+            const response = await authAPI.forgotPassword(data.email, role);
 
             if (response.success) {
                 setEmail(data.email);
@@ -129,7 +129,7 @@ export default function ForgotPassword() {
     const onOTPSubmit = async (data: OTPFormValues) => {
         setIsLoading(true);
         try {
-            const response = await authAPI.verifyResetOTP(email, data.otp);
+            const response = await authAPI.verifyResetOTP(email, data.otp, role);
 
             if (response.success) {
                 setOtp(data.otp);
@@ -160,7 +160,7 @@ export default function ForgotPassword() {
     const onResetSubmit = async (data: ResetFormValues) => {
         setIsLoading(true);
         try {
-            const response = await authAPI.resetPassword(email, otp, data.password);
+            const response = await authAPI.resetPassword(email, otp, data.password, role);
 
             if (response.success) {
                 setCurrentStep("success");
@@ -197,7 +197,7 @@ export default function ForgotPassword() {
 
         setIsLoading(true);
         try {
-            const response = await authAPI.forgotPassword(email);
+            const response = await authAPI.forgotPassword(email, role);
 
             if (response.success) {
                 startResendCountdown();
@@ -271,20 +271,12 @@ export default function ForgotPassword() {
     return (
         <div className="min-h-screen flex flex-col">
             <section className="relative flex-1 flex items-center justify-center overflow-hidden py-12">
-                <CardNav
-                    logo={logo}
-                    logoAlt="Lab2Home Logo"
-                    items={navItems}
-                    baseColor="#fff"
-                    menuColor="hsl(200 85% 45%)"
-                    onExpandChange={setIsNavExpanded}
-                />
+                <Navbar />
                 <Squares speed={0.5} squareSize={40} direction="diagonal" />
 
                 {/* Animated Title */}
                 <div
-                    className={`absolute top-24 md:top-32 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl text-center z-[1] transition-all duration-400 ${isNavExpanded ? 'opacity-0 scale-95 -translate-y-8 pointer-events-none' : 'opacity-100 scale-100 translate-y-0'
-                        }`}
+                    className="absolute top-24 md:top-32 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl text-center z-[1] transition-all duration-400 opacity-100 scale-100 translate-y-0"
                 >
                     <div className="animate-fade-in-up">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 leading-tight">
@@ -331,6 +323,24 @@ export default function ForgotPassword() {
                                 {currentStep === "email" && (
                                     <Form {...emailForm}>
                                         <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-5">
+                                            {/* Role Selection */}
+                                            <div className="flex gap-2 mb-6 p-1 bg-background/60 border border-border/60 rounded-lg animate-fade-in-up">
+                                                {(['patient', 'phlebotomist', 'lab', 'admin'] as const).map((r) => (
+                                                    <button
+                                                        key={r}
+                                                        type="button"
+                                                        onClick={() => setRole(r)}
+                                                        className={`flex-1 capitalize text-sm py-2 rounded-md font-medium transition-all ${
+                                                            role === r 
+                                                                ? "bg-primary text-primary-foreground shadow-sm" 
+                                                                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                                        }`}
+                                                    >
+                                                        {r}
+                                                    </button>
+                                                ))}
+                                            </div>
+
                                             <FormField
                                                 control={emailForm.control}
                                                 name="email"

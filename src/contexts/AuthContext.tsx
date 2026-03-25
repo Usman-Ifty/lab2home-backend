@@ -24,7 +24,7 @@ interface LoginResult {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<LoginResult>;
+  login: (email: string, password: string, role: string) => Promise<LoginResult>;
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<LoginResult> => {
+  const login = async (email: string, password: string, role: string): Promise<LoginResult> => {
     try {
       setLoading(true);
 
@@ -93,8 +93,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       setToken(null);
 
-      // Call unified login endpoint - auto-detects patient or lab
-      const response = await authAPI.login(email, password);
+      console.log('🔐 Starting login process...');
+
+      // Call unified login endpoint with explicitly selected role
+      const response = await authAPI.login(email, password, role);
 
       if (response.success && response.data) {
         console.log('✅ Login successful, user data:', response.data.user);
@@ -124,7 +126,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         // Navigate based on user type
         const path = `/${userData.userType}`;
-        navigate(path, { replace: true });
+        console.log('🚀 Navigating to:', path);
+        navigate(path);
 
         return { success: true };
       }
